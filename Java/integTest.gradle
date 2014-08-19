@@ -1,0 +1,31 @@
+configurations {
+    integTest.extendsFrom testRuntime
+}
+
+sourceSets {
+    integTest {
+        java {
+            srcDir 'src/integTest/java'
+        }
+        compileClasspath = sourceSets.main.output + configurations.integTest
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+dependencies {
+    integTest "org.springframework:spring-test:4.0.6.RELEASE"
+}
+
+task integrationTests(type: Test) {
+    testClassesDir = sourceSets.integTest.output.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+}
+
+idea {
+    module {
+        scopes.TEST.plus += [configurations.integTest]
+    }
+}
+
+integrationTests.shouldRunAfter test
+check.dependsOn integrationTests

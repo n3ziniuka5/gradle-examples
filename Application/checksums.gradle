@@ -1,0 +1,30 @@
+task generateResourcesChecksum(type: ResourcesChecksumTask) {
+    inputDir = sourceSets.main.resources.srcDirs[0]
+    outputDir = file(project.buildDir.path + '/checksum')
+}
+
+integrationTests.dependsOn generateResourcesChecksum
+run.dependsOn generateResourcesChecksum
+installApp.dependsOn generateResourcesChecksum
+
+installApp {
+    into ('build/checksum') {
+        from project.buildDir.path + '/checksum'
+    }
+}
+
+class ResourcesChecksumTask extends DefaultTask {
+    @InputDirectory
+    def File inputDir
+
+    @OutputDirectory
+    def File outputDir
+
+    @TaskAction
+    void genChecksum() {
+        inputDir.eachFileRecurse { file ->
+            ant.checksum(file: file, property: "cs_$file.name")
+            (new File(outputDir.path + '/' + file.name)).text = ant.properties["cs_$file.name"]
+        }
+    }
+}

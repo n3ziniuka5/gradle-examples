@@ -1,0 +1,17 @@
+task helloWorld {
+    doLast {
+        println 'Hello World DO LAST'
+    }
+    doFirst {
+        println 'Hello World DO FIRST'
+    }
+    println 'Hello World CONFIG'
+}
+
+task helloWorldDoLast << {
+    println 'Hello World from helloWorldDoLast'
+}
+
+task emptyTask {
+
+}

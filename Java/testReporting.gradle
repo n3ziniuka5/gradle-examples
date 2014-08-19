@@ -1,0 +1,15 @@
+tasks.withType(Test) { test ->
+    test.afterTest { desc, result ->
+        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+    test.reports.html.enabled = false
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    tasks.withType(Test) { test ->
+        reportOn test
+    }
+}
+
+check.dependsOn testReport
